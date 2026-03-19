@@ -1,0 +1,100 @@
+import type { Exhibition, Lead, TaskInstance, Cost } from "@/types";
+
+export const EXHIBITIONS: Exhibition[] = [
+  {
+    id: "ex-001",
+    name: "CES 2025",
+    city: "Las Vegas",
+    country: "US",
+    venueName: "Las Vegas Convention Center",
+    startsAt: "2025-01-07",
+    endsAt: "2025-01-10",
+    status: "closed",
+    budgetUsd: 85000,
+    goalLeads: 120,
+    goalMeetings: 20,
+    gates: [
+      { order: 1, name: "Go/No-go", status: "passed" },
+      { order: 2, name: "참가확정", status: "passed" },
+      { order: 3, name: "부스/메시지 동결", status: "passed" },
+      { order: 4, name: "현장준비완료", status: "passed" },
+      { order: 5, name: "D+1 리드정제완료", status: "passed" },
+      { order: 6, name: "D+7 후속점검", status: "passed" },
+    ],
+    kpi: { visitors: 2100, qualifiedLeads: 47, aLeads: 14, execMeetings: 6, distributors: 9, proposals: 8, contracts: 3, rev6m: 420000, rev12m: 980000 },
+  },
+  {
+    id: "ex-002",
+    name: "HANNOVER MESSE 2025",
+    city: "Hannover",
+    country: "DE",
+    venueName: "Hannover Exhibition Ground",
+    startsAt: "2025-04-22",
+    endsAt: "2025-04-26",
+    status: "active",
+    budgetUsd: 120000,
+    goalLeads: 150,
+    goalMeetings: 25,
+    gates: [
+      { order: 1, name: "Go/No-go", status: "passed" },
+      { order: 2, name: "참가확정", status: "passed" },
+      { order: 3, name: "부스/메시지 동결", status: "passed" },
+      { order: 4, name: "현장준비완료", status: "pending" },
+      { order: 5, name: "D+1 리드정제완료", status: "pending" },
+      { order: 6, name: "D+7 후속점검", status: "pending" },
+    ],
+    kpi: { visitors: 1840, qualifiedLeads: 38, aLeads: 11, execMeetings: 4, distributors: 7, proposals: 0, contracts: 0, rev6m: 0, rev12m: 0 },
+  },
+  {
+    id: "ex-003",
+    name: "SEMICON Southeast Asia 2025",
+    city: "Penang",
+    country: "MY",
+    venueName: "SPICE Arena",
+    startsAt: "2025-07-14",
+    endsAt: "2025-07-16",
+    status: "planning",
+    budgetUsd: 55000,
+    goalLeads: 80,
+    goalMeetings: 12,
+    gates: [
+      { order: 1, name: "Go/No-go", status: "passed" },
+      { order: 2, name: "참가확정", status: "pending" },
+      { order: 3, name: "부스/메시지 동결", status: "pending" },
+      { order: 4, name: "현장준비완료", status: "pending" },
+      { order: 5, name: "D+1 리드정제완료", status: "pending" },
+      { order: 6, name: "D+7 후속점검", status: "pending" },
+    ],
+    kpi: { visitors: 0, qualifiedLeads: 0, aLeads: 0, execMeetings: 0, distributors: 0, proposals: 0, contracts: 0, rev6m: 0, rev12m: 0 },
+  },
+];
+
+export const LEADS: Lead[] = [
+  { id: "l-001", exhibitionId: "ex-002", company: "Siemens AG", fullName: "Klaus Weber", title: "VP Procurement", email: "k.weber@siemens.com", country: "DE", leadType: "OEM", grade: "A", isQualified: true, nextAction: "Send proposal draft", assignee: "김민준", source: "badge_scan", collectedAt: "2025-04-22T10:30:00", slaOverdue: true },
+  { id: "l-002", exhibitionId: "ex-002", company: "Bosch GmbH", fullName: "Anna Müller", title: "Head of Supply Chain", email: "a.mueller@bosch.com", country: "DE", leadType: "Distributor", grade: "A", isQualified: true, nextAction: "Follow-up call", assignee: "이수진", source: "business_card", collectedAt: "2025-04-23T14:15:00", slaOverdue: false },
+  { id: "l-003", exhibitionId: "ex-002", company: "ABB Ltd", fullName: "Peter Schmidt", title: "Director R&D", email: "p.schmidt@abb.com", country: "CH", leadType: "End-user", grade: "B", isQualified: true, nextAction: "Send catalog", assignee: "김민준", source: "badge_scan", collectedAt: "2025-04-22T16:00:00", slaOverdue: false },
+  { id: "l-004", exhibitionId: "ex-002", company: "Schneider Electric", fullName: "Marie Dubois", title: "Category Manager", email: "m.dubois@se.com", country: "FR", leadType: "Distributor", grade: "A", isQualified: false, nextAction: "Qualify via call", assignee: "박지원", source: "manual", collectedAt: "2025-04-24T09:45:00", slaOverdue: true },
+  { id: "l-005", exhibitionId: "ex-002", company: "Infineon Technologies", fullName: "Hans Koch", title: "Senior Buyer", email: "h.koch@infineon.com", country: "DE", leadType: "OEM", grade: "B", isQualified: true, nextAction: "Demo request", assignee: "이수진", source: "badge_scan", collectedAt: "2025-04-23T11:00:00", slaOverdue: false },
+  { id: "l-006", exhibitionId: "ex-002", company: "Philips Healthcare", fullName: "Lars Jensen", title: "Sourcing Lead", email: "l.jensen@philips.com", country: "NL", leadType: "End-user", grade: "C", isQualified: false, nextAction: "Add to newsletter", assignee: "박지원", source: "badge_scan", collectedAt: "2025-04-24T13:20:00", slaOverdue: false },
+];
+
+export const TASKS: TaskInstance[] = [
+  { id: "t-001", exhibitionId: "ex-002", category: "logistics", title: "항공권 예약 (인천→프랑크푸르트)", dueDate: "2025-03-15", assignee: "이수진", status: "done" },
+  { id: "t-002", exhibitionId: "ex-002", category: "logistics", title: "숙박 예약 (하노버 컨벤션 근처)", dueDate: "2025-03-20", assignee: "이수진", status: "done" },
+  { id: "t-003", exhibitionId: "ex-002", category: "booth", title: "부스 신청 및 위치 확정", dueDate: "2025-02-01", assignee: "김민준", status: "done" },
+  { id: "t-004", exhibitionId: "ex-002", category: "booth", title: "부스 디자인 시안 완료 및 업체 발주", dueDate: "2025-03-01", assignee: "박지원", status: "done" },
+  { id: "t-005", exhibitionId: "ex-002", category: "marketing", title: "타겟 바이어 리스트 200개 완료", dueDate: "2025-03-10", assignee: "김민준", status: "done" },
+  { id: "t-006", exhibitionId: "ex-002", category: "marketing", title: "콜드메일 1차 발송 (유럽 배포사)", dueDate: "2025-04-01", assignee: "김민준", status: "done" },
+  { id: "t-007", exhibitionId: "ex-002", category: "onsite", title: "현장 배지 스캔 앱 세팅", dueDate: "2025-04-21", assignee: "이수진", status: "done" },
+  { id: "t-008", exhibitionId: "ex-002", category: "post", title: "D+1 리드 CSV 정제 및 등급 부여", dueDate: "2025-04-27", assignee: "김민준", status: "in_progress" },
+  { id: "t-009", exhibitionId: "ex-002", category: "post", title: "A급 리드 48h 내 팔로업 완료", dueDate: "2025-04-25", assignee: "이수진", status: "todo" },
+  { id: "t-010", exhibitionId: "ex-002", category: "post", title: "D+7 후속점검 미팅 (내부)", dueDate: "2025-05-03", assignee: "김민준", status: "todo" },
+];
+
+export const COSTS: Cost[] = [
+  { id: "c-001", exhibitionId: "ex-002", category: "booth", description: "부스 임대비 + 전기", budgeted: 45000, actual: 47200, receipt: true },
+  { id: "c-002", exhibitionId: "ex-002", category: "flight", description: "항공권 2매 (ICN-FRA R/T)", budgeted: 5000, actual: 4860, receipt: true },
+  { id: "c-003", exhibitionId: "ex-002", category: "hotel", description: "NH Collection 4박", budgeted: 3200, actual: 3100, receipt: true },
+  { id: "c-004", exhibitionId: "ex-002", category: "promotion", description: "카탈로그 인쇄 (500부)", budgeted: 4000, actual: 3750, receipt: false },
+  { id: "c-005", exhibitionId: "ex-002", category: "interpreter", description: "독일어 통역 (2일)", budgeted: 2400, actual: null, receipt: false },
+];
