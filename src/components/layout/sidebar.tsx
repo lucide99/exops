@@ -3,18 +3,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { EXHIBITIONS } from "@/data/mock";
-import { LEADS } from "@/data/mock";
+import type { Exhibition } from "@/types";
+
+interface Props {
+  exhibitions: Exhibition[];
+  slaCount: number;
+}
 
 const NAV_ITEMS = [
-  { href: "/", icon: "⬡", label: "포트폴리오" },
+  { href: "/", icon: "⬡", label: "대시보드" },
   { href: "/followup", icon: "◈", label: "팔로업 큐" },
 ];
 
-export function Sidebar() {
+const ADMIN_ITEMS = [
+  { href: "/admin/exhibitions", icon: "⊞", label: "전시 관리" },
+];
+
+export function Sidebar({ exhibitions, slaCount }: Props) {
   const pathname = usePathname();
-  const slaCount = LEADS.filter((l) => l.slaOverdue).length;
-  const activeExhibitions = EXHIBITIONS.filter((e) => e.status !== "closed");
+  const activeExhibitions = exhibitions.filter((e) => e.status !== "closed");
 
   return (
     <aside className="w-56 shrink-0 border-r border-border bg-card flex flex-col sticky top-0 h-screen overflow-y-auto">
@@ -51,6 +58,29 @@ export function Sidebar() {
                   {slaCount}
                 </span>
               )}
+            </Link>
+          );
+        })}
+
+        <div className="h-px bg-border my-3" />
+        <div className="text-[10px] text-muted-foreground tracking-widest px-3 py-1 uppercase">
+          관리
+        </div>
+        {ADMIN_ITEMS.map((item) => {
+          const isActive = pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors",
+                isActive
+                  ? "bg-primary/10 text-primary font-semibold border border-primary/20"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground border border-transparent"
+              )}
+            >
+              <span>{item.icon}</span>
+              <span className="flex-1">{item.label}</span>
             </Link>
           );
         })}

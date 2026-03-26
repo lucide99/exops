@@ -1,25 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useTransition } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GateProgress } from "@/components/shared/gate-progress";
+import { InteractiveGateProgress } from "@/components/shared/interactive-gate-progress";
 import { KpiCard } from "@/components/shared/kpi-card";
 import { TasksTab } from "./tasks-tab";
 import { LeadsTab } from "./leads-tab";
 import { CostsTab } from "./costs-tab";
+import { MeetingsTab } from "./meetings-tab";
 import { STATUS_LABEL } from "@/lib/constants";
 import { fmt } from "@/lib/format";
-import { LEADS, TASKS } from "@/data/mock";
-import type { Exhibition } from "@/types";
-import { Button } from "@/components/ui/button";
+import { updateExhibitionStatus } from "@/lib/supabase/actions";
+import type { Exhibition, Lead, TaskInstance, Cost, Meeting } from "@/types";
 
-export function ExhibitionDetail({ exhibition }: { exhibition: Exhibition }) {
+const STATUS_OPTIONS = [
+  { value: "planning", label: "계획중" },
+  { value: "active",   label: "진행중" },
+  { value: "closed",   label: "완료" },
+  { value: "cancelled",label: "취소" },
+] as const;
+
+interface Props {
+  exhibition: Exhibition;
+  leads: Lead[];
+  tasks: TaskInstance[];
+  costs: Cost[];
+  meetings: Meeting[];
+}
+
+export function ExhibitionDetail({ exhibition, leads, tasks, costs, meetings }: Props) {
   const ex = exhibition;
-  const slaOverdueCount = LEADS.filter((l) => l.exhibitionId === ex.id && l.slaOverdue).length;
-  const todoCount = TASKS.filter((t) => t.exhibitionId === ex.id && t.status === "todo").length;
+  const slaOverdueCount = leads.filter((l) => l.slaOverdue).length;
+  const todoCount = tasks.filter((t) => t.status === "todo").length;
+  const [isPending, startTransition] = useTransition();
+
+  const handleStatusChange = (status: string) => {
+    startTransition(() => {
+      updateExhibitionStatus(ex.id, status);
+    });
+  };
 
   return (
     <div>
@@ -67,6 +89,25 @@ export function ExhibitionDetail({ exhibition }: { exhibition: Exhibition }) {
                     <span className="text-xs">{v}</span>
                   </div>
                 ))}
+                {/* 상태 변경 */}
+                <div className="flex justify-between py-1.5 mt-1 items-center">
+                  <span className="text-xs text-muted-foreground">상태 변경</span>
+                  <div className={`flex gap-1 ${isPending ? "opacity-50 pointer-events-none" : ""}`}>
+                    {STATUS_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => handleStatusChange(opt.value)}
+                        className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
+                          ex.status === opt.value
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "text-muted-foreground border-border hover:border-primary hover:text-primary"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -93,30 +134,26 @@ export function ExhibitionDetail({ exhibition }: { exhibition: Exhibition }) {
           <Card>
             <CardContent className="p-5">
               <div className="text-[11px] font-bold text-muted-foreground tracking-widest uppercase mb-3">게이트 체크포인트</div>
-              <GateProgress gates={ex.gates} />
+              <p className="text-[11px] text-muted-foreground mb-3">게이트를 클릭하면 통과/미통과를 전환합니다.</p>
+              <InteractiveGateProgress gates={ex.gates} exhibitionId={ex.id} />
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="tasks">
-          <TasksTab exhibitionId={ex.id} />
+          <TasksTab tasks={tasks} exhibitionId={ex.id} />
         </TabsContent>
 
         <TabsContent value="leads">
-          <LeadsTab exhibitionId={ex.id} />
+          <LeadsTab leads={leads} exhibitionId={ex.id} />
         </TabsContent>
 
         <TabsContent value="meetings">
-          <div className="flex justify-end mb-4">
-            <Button variant="outline" size="sm">+ 미팅 기록</Button>
-          </div>
-          <div className="text-muted-foreground text-sm text-center py-10">
-            미팅 기록이 없습니다. 위 버튼으로 추가하세요.
-          </div>
+          <MeetingsTab meetings={meetings} exhibitionId={ex.id} />
         </TabsContent>
 
         <TabsContent value="costs">
-          <CostsTab exhibitionId={ex.id} />
+          <CostsTab costs={costs} />
         </TabsContent>
       </Tabs>
     </div>

@@ -6,13 +6,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KpiCard } from "@/components/shared/kpi-card";
 import { GateProgress } from "@/components/shared/gate-progress";
-import { EXHIBITIONS, LEADS } from "@/data/mock";
 import { fmt } from "@/lib/format";
 import { STATUS_LABEL } from "@/lib/constants";
+import type { Exhibition } from "@/types";
 
-export function PortfolioDashboard() {
+interface Props {
+  exhibitions: Exhibition[];
+  slaBreaches: number;
+  slaCompleted: number;
+}
+
+export function PortfolioDashboard({ exhibitions, slaBreaches, slaCompleted }: Props) {
   const total = useMemo(() => {
-    return EXHIBITIONS.reduce(
+    return exhibitions.reduce(
       (acc, ex) => {
         acc.visitors += ex.kpi.visitors;
         acc.qualified += ex.kpi.qualifiedLeads;
@@ -27,9 +33,7 @@ export function PortfolioDashboard() {
       },
       { visitors: 0, qualified: 0, aLeads: 0, execMtgs: 0, distributors: 0, proposals: 0, contracts: 0, rev6m: 0, rev12m: 0 }
     );
-  }, []);
-
-  const slaBreaches = LEADS.filter((l) => l.slaOverdue).length;
+  }, [exhibitions]);
 
   return (
     <div>
@@ -37,7 +41,7 @@ export function PortfolioDashboard() {
         <div className="flex items-baseline gap-3 mb-1">
           <h1 className="text-xl font-extrabold">포트폴리오 대시보드</h1>
           <span className="text-sm text-muted-foreground">
-            2025 · {EXHIBITIONS.length}개 전시
+            2025 · {exhibitions.length}개 전시
           </span>
         </div>
         {slaBreaches > 0 && (
@@ -71,7 +75,7 @@ export function PortfolioDashboard() {
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">처리 완료</span>
-                <span className="font-bold text-green-500">12</span>
+                <span className="font-bold text-green-500">{slaCompleted}</span>
               </div>
             </div>
           </CardContent>
@@ -83,7 +87,7 @@ export function PortfolioDashboard() {
         전시 목록
       </div>
       <div className="space-y-3">
-        {EXHIBITIONS.map((ex) => (
+        {exhibitions.map((ex) => (
           <Link key={ex.id} href={`/exhibitions/${ex.id}`}>
             <Card className="p-4 hover:border-primary/30 transition-colors cursor-pointer mb-3">
               <div className="flex items-start justify-between mb-3">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/sidebar";
+import { getExhibitions, getAllLeads } from "@/lib/supabase/queries";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,18 +19,21 @@ export const metadata: Metadata = {
   description: "해외 전시 운영 관리 시스템",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [exhibitions, leads] = await Promise.all([getExhibitions(), getAllLeads()]);
+  const slaCount = leads.filter((l) => l.slaOverdue).length;
+
   return (
     <html lang="ko" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="flex min-h-screen">
-          <Sidebar />
+          <Sidebar exhibitions={exhibitions} slaCount={slaCount} />
           <main className="flex-1 p-7 overflow-y-auto max-h-screen">
             {children}
           </main>

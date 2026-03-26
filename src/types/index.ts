@@ -10,6 +10,7 @@ export type TaskCategory = "logistics" | "booth" | "marketing" | "onsite" | "pos
 export type UserRole = "admin" | "ops" | "sales" | "executive";
 
 export interface Gate {
+  id?: string;
   order: number;
   name: string;
   status: GateStatus;
@@ -80,4 +81,15 @@ export interface Cost {
   budgeted: number;
   actual: number | null;
   receipt: boolean;
+}
+
+export interface Meeting {
+  id: string;
+  exhibitionId: string;
+  company: string | null;
+  contactName: string;
+  contactTitle: string | null;
+  meetingAt: string;
+  notes: string | null;
+  isExec: boolean;
 }

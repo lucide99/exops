@@ -6,13 +6,15 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { KpiCard } from "@/components/shared/kpi-card";
-import { COSTS } from "@/data/mock";
 import { fmt } from "@/lib/format";
 import { CATEGORY_LABEL } from "@/lib/constants";
-import type { CostCategory } from "@/types";
+import type { Cost, CostCategory } from "@/types";
 
-export function CostsTab({ exhibitionId }: { exhibitionId: string }) {
-  const costs = COSTS.filter((c) => c.exhibitionId === exhibitionId);
+interface Props {
+  costs: Cost[];
+}
+
+export function CostsTab({ costs }: Props) {
   const totalBudget = costs.reduce((s, c) => s + c.budgeted, 0);
   const totalActual = costs.reduce((s, c) => s + (c.actual || 0), 0);
   const pctUsed = totalBudget > 0 ? Math.round((totalActual / totalBudget) * 100) : 0;

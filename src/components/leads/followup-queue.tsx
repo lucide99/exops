@@ -3,12 +3,16 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { LEADS } from "@/data/mock";
 import { cn } from "@/lib/utils";
+import type { Lead } from "@/types";
 
-export function FollowUpQueue() {
-  const overdue = LEADS.filter((l) => l.slaOverdue);
-  const upcoming = LEADS.filter((l) => !l.slaOverdue && l.grade !== "C");
+interface Props {
+  leads: Lead[];
+}
+
+export function FollowUpQueue({ leads }: Props) {
+  const overdue = leads.filter((l) => l.slaOverdue);
+  const upcoming = leads.filter((l) => !l.slaOverdue && l.grade !== "C");
 
   return (
     <div>
